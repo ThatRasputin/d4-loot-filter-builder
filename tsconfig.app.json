@@ -20,7 +20,8 @@
     "paths": {
       "@core/*": ["./src/core/*"],
       "@state/*": ["./src/state/*"],
-      "@components/*": ["./src/components/*"]
+      "@components/*": ["./src/components/*"],
+      "@hooks/*": ["./src/hooks/*"]
     },
 
     /* Linting */

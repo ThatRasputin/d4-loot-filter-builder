@@ -13,6 +13,7 @@ export default defineConfig(({ command }) => ({
       '@core': path.resolve(__dirname, 'src/core'),
       '@state': path.resolve(__dirname, 'src/state'),
       '@components': path.resolve(__dirname, 'src/components'),
+      '@hooks': path.resolve(__dirname, 'src/hooks'),
     },
   },
   test: {
