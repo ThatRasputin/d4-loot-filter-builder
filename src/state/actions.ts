@@ -1,0 +1,18 @@
+import type { ConditionPatch } from '@core/conditions/conditionOperations'
+import type { Condition } from '@core/types/condition'
+import type { RuleVisibility } from '@core/types/rule'
+
+export type AppAction =
+  | { type: 'ADD_RULE' }
+  | { type: 'REMOVE_RULE'; ruleId: string }
+  | { type: 'DUPLICATE_RULE'; ruleId: string }
+  | { type: 'REORDER_RULES'; fromIndex: number; toIndex: number }
+  | { type: 'RENAME_RULE'; ruleId: string; name: string }
+  | { type: 'TOGGLE_RULE_ENABLED'; ruleId: string }
+  | { type: 'SET_ALL_RULES_ENABLED'; enabled: boolean }
+  | { type: 'SET_RULE_VISIBILITY'; ruleId: string; visibility: RuleVisibility }
+  | { type: 'SET_RULE_COLOR'; ruleId: string; color: string }
+  | { type: 'ADD_CONDITION'; ruleId: string; condition: Condition }
+  | { type: 'REMOVE_CONDITION'; ruleId: string; conditionId: string }
+  | { type: 'REORDER_CONDITIONS'; ruleId: string; fromIndex: number; toIndex: number }
+  | { type: 'UPDATE_CONDITION'; ruleId: string; conditionId: string; patch: ConditionPatch }
