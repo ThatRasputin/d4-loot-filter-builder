@@ -57,7 +57,7 @@ describe('RuleEditor', () => {
 
     expect(screen.queryByLabelText('Color wheel')).not.toBeInTheDocument()
 
-    await user.selectOptions(screen.getByRole('combobox'), 'Recolor')
+    await user.selectOptions(screen.getByLabelText('Visibility'), 'Recolor')
 
     expect(screen.getByLabelText('Color wheel')).toBeInTheDocument()
   })
@@ -72,5 +72,15 @@ describe('RuleEditor', () => {
     await user.click(screen.getByRole('button', { name: /#00ff00/i }))
 
     expect(screen.getByLabelText('Color wheel')).toHaveValue('#00ff00')
+  })
+
+  it('adds a condition end-to-end via the condition list', async () => {
+    const user = userEvent.setup()
+    renderRuleEditor({ rules: [buildRule()], recentColors: [] }, 'rule-1')
+
+    await user.selectOptions(screen.getByLabelText('Add condition'), 'itemProperties')
+
+    expect(screen.getByText('Item properties')).toBeInTheDocument()
+    expect(screen.getByLabelText('None')).toBeInTheDocument()
   })
 })
