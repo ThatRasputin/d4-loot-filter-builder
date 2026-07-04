@@ -1,0 +1,76 @@
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { describe, expect, it } from 'vitest'
+import { AppStateProvider } from '@state/AppStateContext'
+import type { AppState } from '@state/appState'
+import type { Rule } from '@core/types/rule'
+import { RuleEditor } from './RuleEditor'
+
+function buildRule(overrides: Partial<Rule> = {}): Rule {
+  return {
+    id: 'rule-1',
+    name: 'Chest armor',
+    enabled: true,
+    visibility: 'show',
+    color: '#8a8a86',
+    conditions: [],
+    ...overrides,
+  }
+}
+
+function renderRuleEditor(initialState: AppState, ruleId: string | null) {
+  return render(
+    <AppStateProvider initialState={initialState}>
+      <RuleEditor ruleId={ruleId} />
+    </AppStateProvider>,
+  )
+}
+
+describe('RuleEditor', () => {
+  it('shows "No rule selected" when ruleId does not match any rule', () => {
+    renderRuleEditor({ rules: [], recentColors: [] }, null)
+
+    expect(screen.getByText('No rule selected')).toBeInTheDocument()
+  })
+
+  it('renders the rule name as a heading', () => {
+    renderRuleEditor({ rules: [buildRule()], recentColors: [] }, 'rule-1')
+
+    expect(screen.getByRole('heading', { name: 'Chest armor' })).toBeInTheDocument()
+  })
+
+  it('does not render the color control when visibility is not Recolor', () => {
+    renderRuleEditor({ rules: [buildRule({ visibility: 'show' })], recentColors: [] }, 'rule-1')
+
+    expect(screen.queryByLabelText('Color wheel')).not.toBeInTheDocument()
+  })
+
+  it('renders the color control when visibility is Recolor', () => {
+    renderRuleEditor({ rules: [buildRule({ visibility: 'recolor' })], recentColors: [] }, 'rule-1')
+
+    expect(screen.getByLabelText('Color wheel')).toBeInTheDocument()
+  })
+
+  it('shows the color control once visibility is switched to Recolor', async () => {
+    const user = userEvent.setup()
+    renderRuleEditor({ rules: [buildRule({ visibility: 'show' })], recentColors: [] }, 'rule-1')
+
+    expect(screen.queryByLabelText('Color wheel')).not.toBeInTheDocument()
+
+    await user.selectOptions(screen.getByRole('combobox'), 'Recolor')
+
+    expect(screen.getByLabelText('Color wheel')).toBeInTheDocument()
+  })
+
+  it('applies a recent swatch to the rule color', async () => {
+    const user = userEvent.setup()
+    renderRuleEditor(
+      { rules: [buildRule({ visibility: 'recolor', color: '#8a8a86' })], recentColors: ['#00ff00'] },
+      'rule-1',
+    )
+
+    await user.click(screen.getByRole('button', { name: /#00ff00/i }))
+
+    expect(screen.getByLabelText('Color wheel')).toHaveValue('#00ff00')
+  })
+})

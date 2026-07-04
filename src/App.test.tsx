@@ -16,7 +16,7 @@ describe('App', () => {
     render(<App />)
 
     await user.click(screen.getByRole('button', { name: /rename/i }))
-    const input = screen.getByRole('textbox')
+    const input = screen.getByRole('textbox', { name: 'Rule name' })
     await user.clear(input)
     await user.type(input, 'Arm Slot{Enter}')
 

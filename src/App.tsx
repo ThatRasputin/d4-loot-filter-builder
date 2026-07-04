@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { RuleList } from '@components/RuleList/RuleList'
+import { RuleEditor } from '@components/RuleEditor/RuleEditor'
 import { AppStateProvider } from '@state/AppStateContext'
 import { createInitialAppState } from '@state/appState'
 import { useAppState } from '@state/useAppState'
@@ -7,15 +8,6 @@ import { addRule } from '@core/rules/ruleOperations'
 
 function seedInitialState() {
   return { ...createInitialAppState(), rules: addRule([]) }
-}
-
-function RuleEditorPanel({ ruleId }: { ruleId: string | null }) {
-  const { state } = useAppState()
-  const rule = state.rules.find((candidate) => candidate.id === ruleId)
-
-  if (!rule) return <p>No rule selected</p>
-
-  return <h2>{rule.name}</h2>
 }
 
 function AppShell() {
@@ -29,7 +21,7 @@ function AppShell() {
   return (
     <div>
       <RuleList selectedRuleId={resolvedRuleId} onSelectRule={setSelectedRuleId} />
-      <RuleEditorPanel ruleId={resolvedRuleId} />
+      <RuleEditor ruleId={resolvedRuleId} />
     </div>
   )
 }

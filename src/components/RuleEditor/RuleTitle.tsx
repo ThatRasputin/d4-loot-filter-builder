@@ -39,6 +39,7 @@ export function RuleTitle({ name, onRename }: RuleTitleProps) {
     return (
       <input
         type="text"
+        aria-label="Rule name"
         value={draft}
         autoFocus
         onChange={(event) => setDraft(event.target.value)}
