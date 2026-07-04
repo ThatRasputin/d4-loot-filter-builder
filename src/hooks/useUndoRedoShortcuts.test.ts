@@ -65,4 +65,31 @@ describe('useUndoRedoShortcuts', () => {
 
     expect(undo).not.toHaveBeenCalled()
   })
+
+  it('ignores Ctrl+Z while a text input is focused, leaving native field undo to handle it', () => {
+    const undo = vi.fn()
+    const redo = vi.fn()
+    renderHook(() => useUndoRedoShortcuts({ undo, redo }))
+
+    const input = document.createElement('input')
+    input.type = 'text'
+    document.body.appendChild(input)
+    input.focus()
+
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'z', ctrlKey: true, bubbles: true }))
+
+    expect(undo).not.toHaveBeenCalled()
+    document.body.removeChild(input)
+  })
+
+  it('still calls undo on Ctrl+Z when focus is outside any text field', () => {
+    const undo = vi.fn()
+    const redo = vi.fn()
+    renderHook(() => useUndoRedoShortcuts({ undo, redo }))
+
+    document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'z', ctrlKey: true, bubbles: true }))
+
+    expect(undo).toHaveBeenCalledOnce()
+    expect(redo).not.toHaveBeenCalled()
+  })
 })
