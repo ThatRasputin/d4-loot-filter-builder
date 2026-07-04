@@ -25,6 +25,13 @@ describe('createDefaultCondition', () => {
     expect(condition.id).toBeTruthy()
   })
 
+  it('creates a codexUpgradeCheck condition with codexUpgrade false and a fresh id', () => {
+    const condition = createDefaultCondition('codexUpgradeCheck')
+    expect(condition.type).toBe('codexUpgradeCheck')
+    expect(condition).toMatchObject({ codexUpgrade: false })
+    expect(condition.id).toBeTruthy()
+  })
+
   it('generates a unique id on every call', () => {
     const a = createDefaultCondition('itemProperties')
     const b = createDefaultCondition('itemProperties')
@@ -45,7 +52,11 @@ describe('getAvailableConditionTypes', () => {
   })
 
   it('returns an empty array once every type is present', () => {
-    const conditions: Condition[] = [createDefaultCondition('itemProperties'), createDefaultCondition('rarityMatch')]
+    const conditions: Condition[] = [
+      createDefaultCondition('itemProperties'),
+      createDefaultCondition('rarityMatch'),
+      createDefaultCondition('codexUpgradeCheck'),
+    ]
     expect(getAvailableConditionTypes(conditions)).toEqual([])
   })
 })

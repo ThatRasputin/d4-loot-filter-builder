@@ -24,6 +24,12 @@ const rarityMatchCondition: Condition = {
   talismanSets: false,
 }
 
+const codexUpgradeCheckCondition: Condition = {
+  id: 'c3',
+  type: 'codexUpgradeCheck',
+  codexUpgrade: false,
+}
+
 describe('ConditionList', () => {
   it('renders one row per condition', () => {
     render(
@@ -58,7 +64,7 @@ describe('ConditionList', () => {
   it('hides the add-condition control once every type is present', () => {
     render(
       <ConditionList
-        conditions={[itemPropertiesCondition, rarityMatchCondition]}
+        conditions={[itemPropertiesCondition, rarityMatchCondition, codexUpgradeCheckCondition]}
         onReorder={vi.fn()}
         onAddCondition={vi.fn()}
         onRemoveCondition={vi.fn()}
