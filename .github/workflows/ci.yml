@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      # npm ci fails here due to upstream lockfile drift in Vite 8's Rolldown optional
+      # native bindings (@rolldown/binding-*): a Windows-generated lockfile doesn't
+      # carry every Linux-specific optional subtree, so npm ci's strict verification
+      # rejects it. npm install resolves what this platform actually needs instead.
+      - run: npm install
+      - run: npm run typecheck
+      - run: npm run test:run
+      - run: npm run build
