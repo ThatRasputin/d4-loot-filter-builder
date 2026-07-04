@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { isEditableElement } from './isEditableElement'
 
 interface UseUndoRedoShortcutsOptions {
   undo: () => void
@@ -8,6 +9,8 @@ interface UseUndoRedoShortcutsOptions {
 export function useUndoRedoShortcuts({ undo, redo }: UseUndoRedoShortcutsOptions): void {
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
+      if (isEditableElement(event.target)) return
+
       const modifierPressed = event.ctrlKey || event.metaKey
       if (!modifierPressed) return
 
