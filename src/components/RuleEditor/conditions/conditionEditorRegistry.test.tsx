@@ -27,4 +27,11 @@ describe('ConditionEditor', () => {
 
     expect(screen.getByText('Item rarity match')).toBeInTheDocument()
   })
+
+  it('renders CodexUpgradeCheckEditor for a codexUpgradeCheck condition', () => {
+    const condition: Condition = { id: 'c3', type: 'codexUpgradeCheck', codexUpgrade: false }
+    render(<ConditionEditor condition={condition} onChange={vi.fn()} />)
+
+    expect(screen.getByText('Codex upgrade check')).toBeInTheDocument()
+  })
 })

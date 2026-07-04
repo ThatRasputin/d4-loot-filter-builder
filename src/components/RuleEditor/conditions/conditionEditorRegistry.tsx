@@ -1,5 +1,6 @@
 import type { ConditionPatch } from '@core/conditions/conditionOperations'
 import type { Condition } from '@core/types/condition'
+import { CodexUpgradeCheckEditor } from './CodexUpgradeCheckEditor'
 import { ItemPropertiesEditor } from './ItemPropertiesEditor'
 import { ItemRarityMatchEditor } from './ItemRarityMatchEditor'
 
@@ -14,5 +15,7 @@ export function ConditionEditor({ condition, onChange }: ConditionEditorProps) {
       return <ItemPropertiesEditor condition={condition} onChange={onChange} />
     case 'rarityMatch':
       return <ItemRarityMatchEditor condition={condition} onChange={onChange} />
+    case 'codexUpgradeCheck':
+      return <CodexUpgradeCheckEditor condition={condition} onChange={onChange} />
   }
 }
