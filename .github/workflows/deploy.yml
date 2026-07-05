@@ -40,7 +40,22 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment_retry.outputs.page_url }}
     steps:
       - id: deployment
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+
+      # actions/deploy-pages occasionally gets a transient "Deployment failed,
+      # try again later" from GitHub's Pages backend (seen on run 28719715877)
+      # even though the artifact and config are fine — a fresh attempt succeeds
+      # immediately after. Retry once instead of leaving main broken until the
+      # next unrelated push happens to redeploy.
+      - name: Wait before retrying deployment
+        if: steps.deployment.outcome == 'failure'
+        run: sleep 15
+
+      - name: Retry deployment
+        if: steps.deployment.outcome == 'failure'
+        id: deployment_retry
         uses: actions/deploy-pages@v4
