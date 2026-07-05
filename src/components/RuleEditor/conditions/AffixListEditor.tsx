@@ -1,5 +1,5 @@
 import { AFFIX_POOL } from '@core/data/affixPool'
-import { ChipPicker } from './ChipPicker/ChipPicker'
+import { Combobox } from './Combobox/Combobox'
 
 export interface AffixListPatch {
   affixIds?: string[]
@@ -22,8 +22,8 @@ export function AffixListEditor({ legend, affixIds, greaterAffixIds, minimumCoun
   return (
     <fieldset>
       <legend>{legend}</legend>
-      <ChipPicker label="Affixes" pool={AFFIX_POOL} selectedIds={affixIds} onChange={(ids) => onChange({ affixIds: ids })} />
-      <ChipPicker
+      <Combobox label="Affixes" pool={AFFIX_POOL} selectedIds={affixIds} onChange={(ids) => onChange({ affixIds: ids })} />
+      <Combobox
         label="Greater affixes"
         pool={AFFIX_POOL}
         selectedIds={greaterAffixIds}

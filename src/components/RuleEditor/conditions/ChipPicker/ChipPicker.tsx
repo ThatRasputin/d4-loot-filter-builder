@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { SelectedChips } from '../SelectedChips'
 
 // Caps how many unselected entries render as checkboxes per group at once. Without this, a
 // pool the size of AFFIX_POOL (877 entries) renders as a giant unpaginated checkbox list —
@@ -89,13 +90,7 @@ export function ChipPicker<T extends ChipPickerEntry>({
     <fieldset>
       <legend>{label}</legend>
 
-      <div>
-        {selectedEntries.map((entry) => (
-          <button key={entry.id} type="button" aria-label={`Remove ${entry.displayName}`} onClick={() => handleRemove(entry.id)}>
-            {entry.displayName}
-          </button>
-        ))}
-      </div>
+      <SelectedChips entries={selectedEntries} onRemove={handleRemove} />
 
       {selectedIds.length > 0 && (
         <button type="button" aria-label={`Deselect all ${label}`} onClick={handleDeselectAll}>

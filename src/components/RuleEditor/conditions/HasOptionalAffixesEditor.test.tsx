@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import type { HasOptionalAffixesCondition } from '@core/types/condition'
@@ -26,8 +26,8 @@ describe('HasOptionalAffixesEditor', () => {
     const onChange = vi.fn()
     render(<HasOptionalAffixesEditor condition={makeCondition()} onChange={onChange} />)
 
-    const affixesGroup = screen.getByRole('group', { name: 'Affixes' })
-    await user.click(within(affixesGroup).getByRole('checkbox', { name: 'abyss damage' }))
+    await user.type(screen.getByRole('combobox', { name: 'Search Affixes' }), 'abyss damage')
+    await user.click(screen.getByRole('option', { name: 'abyss damage' }))
 
     expect(onChange).toHaveBeenCalledWith({ affixIds: ['abyss_damage'] })
   })
