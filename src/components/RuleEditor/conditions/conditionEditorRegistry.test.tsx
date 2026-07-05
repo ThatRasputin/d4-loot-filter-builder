@@ -34,4 +34,11 @@ describe('ConditionEditor', () => {
 
     expect(screen.getByText('Codex upgrade check')).toBeInTheDocument()
   })
+
+  it('renders ItemTypeMatchEditor for an itemTypeMatch condition', () => {
+    const condition: Condition = { id: 'c4', type: 'itemTypeMatch', itemTypeIds: [] }
+    render(<ConditionEditor condition={condition} onChange={vi.fn()} />)
+
+    expect(screen.getByText('Item Type(s)')).toBeInTheDocument()
+  })
 })
