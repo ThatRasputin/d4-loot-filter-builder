@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { AffixListEditor } from './AffixListEditor'
@@ -22,8 +22,8 @@ describe('AffixListEditor', () => {
       <AffixListEditor legend="Has required affixes" affixIds={[]} greaterAffixIds={[]} minimumCount={0} onChange={onChange} />,
     )
 
-    const affixesGroup = screen.getByRole('group', { name: 'Affixes' })
-    await user.click(within(affixesGroup).getByRole('checkbox', { name: 'abyss damage' }))
+    await user.type(screen.getByRole('combobox', { name: 'Search Affixes' }), 'abyss damage')
+    await user.click(screen.getByRole('option', { name: 'abyss damage' }))
 
     expect(onChange).toHaveBeenCalledWith({ affixIds: ['abyss_damage'] })
   })
@@ -35,8 +35,8 @@ describe('AffixListEditor', () => {
       <AffixListEditor legend="Has required affixes" affixIds={[]} greaterAffixIds={[]} minimumCount={0} onChange={onChange} />,
     )
 
-    const greaterGroup = screen.getByRole('group', { name: 'Greater affixes' })
-    await user.click(within(greaterGroup).getByRole('checkbox', { name: 'abyss damage' }))
+    await user.type(screen.getByRole('combobox', { name: 'Search Greater affixes' }), 'abyss damage')
+    await user.click(screen.getByRole('option', { name: 'abyss damage' }))
 
     expect(onChange).toHaveBeenCalledWith({ greaterAffixIds: ['abyss_damage'] })
   })
