@@ -162,4 +162,31 @@ describe('ChipPicker', () => {
     expect(talismanGroup).toBeInTheDocument()
     expect(within(talismanGroup).queryAllByRole('checkbox')).toHaveLength(1) // only the (unchecked, inert) Select-all checkbox
   })
+
+  it('caps the rendered checkbox list for a large pool and prompts to refine the search', () => {
+    const largePool: TestEntry[] = Array.from({ length: 200 }, (_, i) => ({
+      id: `entry-${i}`,
+      displayName: `Entry ${i}`,
+      category: 'flat',
+    }))
+
+    render(<ChipPicker label="Affixes" pool={largePool} selectedIds={[]} onChange={vi.fn()} />)
+
+    expect(screen.getAllByRole('checkbox')).toHaveLength(50)
+    expect(screen.getByText('Showing 50 of 200 — refine your search to see more')).toBeInTheDocument()
+  })
+
+  it('does not show the refine-search prompt once search narrows below the cap', async () => {
+    const user = userEvent.setup()
+    const largePool: TestEntry[] = Array.from({ length: 200 }, (_, i) => ({
+      id: `entry-${i}`,
+      displayName: `Entry ${i}`,
+      category: 'flat',
+    }))
+
+    render(<ChipPicker label="Affixes" pool={largePool} selectedIds={[]} onChange={vi.fn()} />)
+    await user.type(screen.getByLabelText('Search Affixes'), 'Entry 5')
+
+    expect(screen.queryByText(/refine your search/)).not.toBeInTheDocument()
+  })
 })

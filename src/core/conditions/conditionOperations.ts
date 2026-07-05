@@ -1,6 +1,8 @@
 import type {
   CodexUpgradeCheckCondition,
   Condition,
+  HasOptionalAffixesCondition,
+  HasRequiredAffixesCondition,
   ItemPropertiesCondition,
   ItemRarityMatchCondition,
   ItemTypeMatchCondition,
@@ -28,7 +30,9 @@ export function reorderConditions(conditions: Condition[], fromIndex: number, to
 export type ConditionPatch = Partial<ItemPropertiesCondition> &
   Partial<ItemRarityMatchCondition> &
   Partial<CodexUpgradeCheckCondition> &
-  Partial<ItemTypeMatchCondition>
+  Partial<ItemTypeMatchCondition> &
+  Partial<HasRequiredAffixesCondition> &
+  Partial<HasOptionalAffixesCondition>
 
 export function updateCondition(conditions: Condition[], conditionId: string, patch: ConditionPatch): Condition[] {
   return conditions.map((condition) =>

@@ -41,4 +41,30 @@ describe('ConditionEditor', () => {
 
     expect(screen.getByText('Item Type(s)')).toBeInTheDocument()
   })
+
+  it('renders HasRequiredAffixesEditor for a hasRequiredAffixes condition', () => {
+    const condition: Condition = {
+      id: 'c5',
+      type: 'hasRequiredAffixes',
+      affixIds: [],
+      greaterAffixIds: [],
+      minimumCount: 0,
+    }
+    render(<ConditionEditor condition={condition} onChange={vi.fn()} />)
+
+    expect(screen.getByText('Has required affixes')).toBeInTheDocument()
+  })
+
+  it('renders HasOptionalAffixesEditor for a hasOptionalAffixes condition', () => {
+    const condition: Condition = {
+      id: 'c6',
+      type: 'hasOptionalAffixes',
+      affixIds: [],
+      greaterAffixIds: [],
+      minimumCount: 0,
+    }
+    render(<ConditionEditor condition={condition} onChange={vi.fn()} />)
+
+    expect(screen.getByText('Has optional affixes')).toBeInTheDocument()
+  })
 })
