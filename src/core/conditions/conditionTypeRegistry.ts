@@ -1,12 +1,13 @@
 import { createId } from '@core/ids'
 import type { Condition, ConditionType } from '@core/types/condition'
 
-export const CONDITION_TYPES: ConditionType[] = ['itemProperties', 'rarityMatch', 'codexUpgradeCheck']
+export const CONDITION_TYPES: ConditionType[] = ['itemProperties', 'rarityMatch', 'codexUpgradeCheck', 'itemTypeMatch']
 
 export const CONDITION_TYPE_LABELS: Record<ConditionType, string> = {
   itemProperties: 'Item properties',
   rarityMatch: 'Item rarity match',
   codexUpgradeCheck: 'Codex upgrade check',
+  itemTypeMatch: 'Item type match',
 }
 
 export function createDefaultCondition(type: ConditionType): Condition {
@@ -25,6 +26,9 @@ export function createDefaultCondition(type: ConditionType): Condition {
       mythicUnique: false,
       talismanSets: false,
     }
+  }
+  if (type === 'itemTypeMatch') {
+    return { id: createId(), type: 'itemTypeMatch', itemTypeIds: [] }
   }
   return { id: createId(), type: 'codexUpgradeCheck', codexUpgrade: false }
 }

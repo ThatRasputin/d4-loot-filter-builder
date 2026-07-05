@@ -1,4 +1,4 @@
-export type ConditionType = 'itemProperties' | 'rarityMatch' | 'codexUpgradeCheck'
+export type ConditionType = 'itemProperties' | 'rarityMatch' | 'codexUpgradeCheck' | 'itemTypeMatch'
 
 export interface ItemPropertiesCondition {
   id: string
@@ -26,4 +26,14 @@ export interface CodexUpgradeCheckCondition {
   codexUpgrade: boolean
 }
 
-export type Condition = ItemPropertiesCondition | ItemRarityMatchCondition | CodexUpgradeCheckCondition
+export interface ItemTypeMatchCondition {
+  id: string
+  type: 'itemTypeMatch'
+  itemTypeIds: string[]
+}
+
+export type Condition =
+  | ItemPropertiesCondition
+  | ItemRarityMatchCondition
+  | CodexUpgradeCheckCondition
+  | ItemTypeMatchCondition

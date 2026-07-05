@@ -3,6 +3,7 @@ import type {
   Condition,
   ItemPropertiesCondition,
   ItemRarityMatchCondition,
+  ItemTypeMatchCondition,
 } from '@core/types/condition'
 
 export function addCondition(conditions: Condition[], condition: Condition): Condition[] {
@@ -26,7 +27,8 @@ export function reorderConditions(conditions: Condition[], fromIndex: number, to
 // for only patching fields that belong to the condition's actual variant.
 export type ConditionPatch = Partial<ItemPropertiesCondition> &
   Partial<ItemRarityMatchCondition> &
-  Partial<CodexUpgradeCheckCondition>
+  Partial<CodexUpgradeCheckCondition> &
+  Partial<ItemTypeMatchCondition>
 
 export function updateCondition(conditions: Condition[], conditionId: string, patch: ConditionPatch): Condition[] {
   return conditions.map((condition) =>

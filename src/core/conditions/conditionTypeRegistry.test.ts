@@ -32,6 +32,13 @@ describe('createDefaultCondition', () => {
     expect(condition.id).toBeTruthy()
   })
 
+  it('creates an itemTypeMatch condition with an empty itemTypeIds list and a fresh id', () => {
+    const condition = createDefaultCondition('itemTypeMatch')
+    expect(condition.type).toBe('itemTypeMatch')
+    expect(condition).toMatchObject({ itemTypeIds: [] })
+    expect(condition.id).toBeTruthy()
+  })
+
   it('generates a unique id on every call', () => {
     const a = createDefaultCondition('itemProperties')
     const b = createDefaultCondition('itemProperties')
@@ -56,6 +63,7 @@ describe('getAvailableConditionTypes', () => {
       createDefaultCondition('itemProperties'),
       createDefaultCondition('rarityMatch'),
       createDefaultCondition('codexUpgradeCheck'),
+      createDefaultCondition('itemTypeMatch'),
     ]
     expect(getAvailableConditionTypes(conditions)).toEqual([])
   })
