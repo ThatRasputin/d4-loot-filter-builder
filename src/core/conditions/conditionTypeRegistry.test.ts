@@ -39,6 +39,20 @@ describe('createDefaultCondition', () => {
     expect(condition.id).toBeTruthy()
   })
 
+  it('creates a hasRequiredAffixes condition with empty lists, a zero threshold, and a fresh id', () => {
+    const condition = createDefaultCondition('hasRequiredAffixes')
+    expect(condition.type).toBe('hasRequiredAffixes')
+    expect(condition).toMatchObject({ affixIds: [], greaterAffixIds: [], minimumCount: 0 })
+    expect(condition.id).toBeTruthy()
+  })
+
+  it('creates a hasOptionalAffixes condition with empty lists, a zero threshold, and a fresh id', () => {
+    const condition = createDefaultCondition('hasOptionalAffixes')
+    expect(condition.type).toBe('hasOptionalAffixes')
+    expect(condition).toMatchObject({ affixIds: [], greaterAffixIds: [], minimumCount: 0 })
+    expect(condition.id).toBeTruthy()
+  })
+
   it('generates a unique id on every call', () => {
     const a = createDefaultCondition('itemProperties')
     const b = createDefaultCondition('itemProperties')
@@ -64,6 +78,8 @@ describe('getAvailableConditionTypes', () => {
       createDefaultCondition('rarityMatch'),
       createDefaultCondition('codexUpgradeCheck'),
       createDefaultCondition('itemTypeMatch'),
+      createDefaultCondition('hasRequiredAffixes'),
+      createDefaultCondition('hasOptionalAffixes'),
     ]
     expect(getAvailableConditionTypes(conditions)).toEqual([])
   })

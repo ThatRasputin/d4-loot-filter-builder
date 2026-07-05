@@ -36,6 +36,22 @@ const itemTypeMatchCondition: Condition = {
   itemTypeIds: [],
 }
 
+const hasRequiredAffixesCondition: Condition = {
+  id: 'c5',
+  type: 'hasRequiredAffixes',
+  affixIds: [],
+  greaterAffixIds: [],
+  minimumCount: 0,
+}
+
+const hasOptionalAffixesCondition: Condition = {
+  id: 'c6',
+  type: 'hasOptionalAffixes',
+  affixIds: [],
+  greaterAffixIds: [],
+  minimumCount: 0,
+}
+
 describe('ConditionList', () => {
   it('renders one row per condition', () => {
     render(
@@ -70,7 +86,14 @@ describe('ConditionList', () => {
   it('hides the add-condition control once every type is present', () => {
     render(
       <ConditionList
-        conditions={[itemPropertiesCondition, rarityMatchCondition, codexUpgradeCheckCondition, itemTypeMatchCondition]}
+        conditions={[
+          itemPropertiesCondition,
+          rarityMatchCondition,
+          codexUpgradeCheckCondition,
+          itemTypeMatchCondition,
+          hasRequiredAffixesCondition,
+          hasOptionalAffixesCondition,
+        ]}
         onReorder={vi.fn()}
         onAddCondition={vi.fn()}
         onRemoveCondition={vi.fn()}

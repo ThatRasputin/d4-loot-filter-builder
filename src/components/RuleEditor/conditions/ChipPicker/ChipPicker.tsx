@@ -1,5 +1,13 @@
 import { useState } from 'react'
 
+// Caps how many unselected entries render as checkboxes per group at once. Without this, a
+// pool the size of AFFIX_POOL (877 entries) renders as a giant unpaginated checkbox list —
+// both a real performance problem (multiple such lists on one rule made the app noticeably
+// slow to interact with) and the wrong UX: issue #10 calls for an "add-affix dropdown",
+// which implies narrowing via search rather than scrolling hundreds of checkboxes. Grouped
+// pickers (e.g. ITEM_TYPE_POOL's ~27 entries) never hit this cap in practice.
+const MAX_VISIBLE_ENTRIES_PER_GROUP = 50
+
 export interface ChipPickerEntry {
   id: string
   displayName: string
@@ -103,28 +111,38 @@ export function ChipPicker<T extends ChipPickerEntry>({
         onChange={(event) => setSearch(event.target.value)}
       />
 
-      {groups.map((group) => (
-        <fieldset key={group.key}>
-          {group.label && <legend>{group.label}</legend>}
-          {group.label && (
-            <label>
-              <input
-                type="checkbox"
-                aria-label={`Select all ${group.label}`}
-                checked={group.entries.length > 0 && group.entries.every((entry) => selectedIds.includes(entry.id))}
-                onChange={() => handleSelectAllInGroup(group.entries)}
-              />
-              Select all
-            </label>
-          )}
-          {group.entries.map((entry) => (
-            <label key={entry.id}>
-              <input type="checkbox" checked={selectedIds.includes(entry.id)} onChange={() => handleToggle(entry.id)} />
-              {entry.displayName}
-            </label>
-          ))}
-        </fieldset>
-      ))}
+      {groups.map((group) => {
+        const visibleEntries = group.entries.slice(0, MAX_VISIBLE_ENTRIES_PER_GROUP)
+        const hiddenCount = group.entries.length - visibleEntries.length
+
+        return (
+          <fieldset key={group.key}>
+            {group.label && <legend>{group.label}</legend>}
+            {group.label && (
+              <label>
+                <input
+                  type="checkbox"
+                  aria-label={`Select all ${group.label}`}
+                  checked={group.entries.length > 0 && group.entries.every((entry) => selectedIds.includes(entry.id))}
+                  onChange={() => handleSelectAllInGroup(group.entries)}
+                />
+                Select all
+              </label>
+            )}
+            {visibleEntries.map((entry) => (
+              <label key={entry.id}>
+                <input type="checkbox" checked={selectedIds.includes(entry.id)} onChange={() => handleToggle(entry.id)} />
+                {entry.displayName}
+              </label>
+            ))}
+            {hiddenCount > 0 && (
+              <p>
+                Showing {visibleEntries.length} of {group.entries.length} — refine your search to see more
+              </p>
+            )}
+          </fieldset>
+        )
+      })}
     </fieldset>
   )
 }
