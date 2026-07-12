@@ -160,6 +160,50 @@ describe('appReducer', () => {
     })
   })
 
+  describe('per-rule optional affixes actions', () => {
+    it('SET_RULE_OPTIONAL_AFFIXES_LIST_MODE materializes the rule and forks the global list when set to custom', () => {
+      const state = makeState({
+        rules: [makeRule({ id: 'a', optionalAffixes: null })],
+        globalAffixPool: { enabled: true, affixIds: ['g1'], greaterAffixIds: ['gg1'] },
+      })
+      const result = appReducer(state, { type: 'SET_RULE_OPTIONAL_AFFIXES_LIST_MODE', ruleId: 'a', listMode: 'custom' })
+      expect(result.rules[0].optionalAffixes).toMatchObject({
+        listMode: 'custom',
+        customAffixIds: ['g1'],
+        customGreaterAffixIds: ['gg1'],
+      })
+    })
+
+    it('UPDATE_RULE_OPTIONAL_AFFIXES_CUSTOM_LIST patches the custom list on the matching rule', () => {
+      const state = makeState({
+        rules: [
+          makeRule({
+            id: 'a',
+            optionalAffixes: {
+              removed: false,
+              listMode: 'custom',
+              customAffixIds: [],
+              customGreaterAffixIds: [],
+              requiredCount: 0,
+            },
+          }),
+        ],
+      })
+      const result = appReducer(state, {
+        type: 'UPDATE_RULE_OPTIONAL_AFFIXES_CUSTOM_LIST',
+        ruleId: 'a',
+        patch: { customAffixIds: ['x'] },
+      })
+      expect(result.rules[0].optionalAffixes).toMatchObject({ customAffixIds: ['x'] })
+    })
+
+    it('SET_RULE_OPTIONAL_AFFIXES_COUNT materializes the rule and sets the count', () => {
+      const state = makeState({ rules: [makeRule({ id: 'a', optionalAffixes: null })] })
+      const result = appReducer(state, { type: 'SET_RULE_OPTIONAL_AFFIXES_COUNT', ruleId: 'a', requiredCount: 2 })
+      expect(result.rules[0].optionalAffixes).toMatchObject({ requiredCount: 2 })
+    })
+  })
+
   it('never mutates the input state object', () => {
     const state = makeState({ rules: [makeRule({ id: 'a' })] })
     const snapshot = JSON.parse(JSON.stringify(state))

@@ -11,6 +11,7 @@ import {
   setRuleVisibility,
   setRuleColor,
   updateRuleConditions,
+  updateRuleOptionalAffixes,
 } from './ruleOperations'
 
 function makeRule(overrides: Partial<Rule> = {}): Rule {
@@ -162,5 +163,33 @@ describe('updateRuleConditions', () => {
     const result = updateRuleConditions(rules, 'a', (conditions) => [...conditions, newCondition])
     expect(result[0].conditions).toEqual([newCondition])
     expect(result[1].conditions).toEqual([])
+  })
+})
+
+describe('updateRuleOptionalAffixes', () => {
+  it('applies the updater function to the matching rule\'s optionalAffixes and leaves other rules untouched', () => {
+    const rules = [makeRule({ id: 'a', optionalAffixes: null }), makeRule({ id: 'b', optionalAffixes: null })]
+    const materialized = {
+      removed: false,
+      listMode: 'custom' as const,
+      customAffixIds: ['x'],
+      customGreaterAffixIds: [],
+      requiredCount: 1,
+    }
+    const result = updateRuleOptionalAffixes(rules, 'a', () => materialized)
+    expect(result[0].optionalAffixes).toEqual(materialized)
+    expect(result[1].optionalAffixes).toBeNull()
+  })
+
+  it('is a no-op when the id is not found', () => {
+    const rules = [makeRule({ id: 'a', optionalAffixes: null })]
+    const result = updateRuleOptionalAffixes(rules, 'missing', () => ({
+      removed: false,
+      listMode: 'inherited',
+      customAffixIds: [],
+      customGreaterAffixIds: [],
+      requiredCount: 0,
+    }))
+    expect(result).toEqual(rules)
   })
 })

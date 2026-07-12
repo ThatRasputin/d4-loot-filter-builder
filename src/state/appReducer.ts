@@ -13,6 +13,11 @@ import {
   toggleRuleEnabled,
   updateRuleConditions,
 } from '@core/rules/ruleOperations'
+import {
+  setRuleOptionalAffixesCount,
+  setRuleOptionalAffixesListMode,
+  updateRuleOptionalAffixesCustomList,
+} from '@core/rules/ruleOptionalAffixesOperations'
 import type { AppAction } from './actions'
 import type { AppState } from './appState'
 
@@ -26,6 +31,18 @@ export function appReducer(state: AppState, action: AppAction): AppState {
 
     case 'UPDATE_GLOBAL_AFFIX_POOL':
       return { ...state, globalAffixPool: updateGlobalAffixPool(state.globalAffixPool, action.patch) }
+
+    case 'SET_RULE_OPTIONAL_AFFIXES_LIST_MODE':
+      return {
+        ...state,
+        rules: setRuleOptionalAffixesListMode(state.rules, action.ruleId, action.listMode, state.globalAffixPool),
+      }
+
+    case 'UPDATE_RULE_OPTIONAL_AFFIXES_CUSTOM_LIST':
+      return { ...state, rules: updateRuleOptionalAffixesCustomList(state.rules, action.ruleId, action.patch) }
+
+    case 'SET_RULE_OPTIONAL_AFFIXES_COUNT':
+      return { ...state, rules: setRuleOptionalAffixesCount(state.rules, action.ruleId, action.requiredCount) }
 
     case 'REMOVE_RULE':
       return { ...state, rules: removeRule(state.rules, action.ruleId) }

@@ -1,11 +1,19 @@
 import type { ConditionPatch } from '@core/conditions/conditionOperations'
 import type { Condition } from '@core/types/condition'
+import type { OptionalAffixesListMode } from '@core/types/globalAffixPool'
 import type { RuleVisibility } from '@core/types/rule'
 
 export type AppAction =
   | { type: 'ADD_RULE' }
   | { type: 'SET_GLOBAL_AFFIX_POOL_ENABLED'; enabled: boolean }
   | { type: 'UPDATE_GLOBAL_AFFIX_POOL'; patch: { affixIds?: string[]; greaterAffixIds?: string[] } }
+  | { type: 'SET_RULE_OPTIONAL_AFFIXES_LIST_MODE'; ruleId: string; listMode: OptionalAffixesListMode }
+  | {
+      type: 'UPDATE_RULE_OPTIONAL_AFFIXES_CUSTOM_LIST'
+      ruleId: string
+      patch: { customAffixIds?: string[]; customGreaterAffixIds?: string[] }
+    }
+  | { type: 'SET_RULE_OPTIONAL_AFFIXES_COUNT'; ruleId: string; requiredCount: number }
   | { type: 'REMOVE_RULE'; ruleId: string }
   | { type: 'DUPLICATE_RULE'; ruleId: string }
   | { type: 'REORDER_RULES'; fromIndex: number; toIndex: number }

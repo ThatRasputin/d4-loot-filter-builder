@@ -85,4 +85,26 @@ describe('RuleEditor', () => {
     expect(screen.getByText('Item properties')).toBeInTheDocument()
     expect(screen.getByLabelText('None')).toBeInTheDocument()
   })
+
+  it('does not render the optional affixes section when the rule has never diverged and the global pool is off', () => {
+    renderRuleEditor(
+      { rules: [buildRule()], recentColors: [], globalAffixPool: { enabled: false, affixIds: [], greaterAffixIds: [] } },
+      'rule-1',
+    )
+
+    expect(screen.queryByRole('region', { name: 'Optional affixes' })).not.toBeInTheDocument()
+  })
+
+  it('renders the optional affixes section once the global pool is enabled', () => {
+    renderRuleEditor(
+      {
+        rules: [buildRule()],
+        recentColors: [],
+        globalAffixPool: { enabled: true, affixIds: [], greaterAffixIds: [] },
+      },
+      'rule-1',
+    )
+
+    expect(screen.getByRole('region', { name: 'Optional affixes' })).toBeInTheDocument()
+  })
 })

@@ -1,13 +1,16 @@
 import { createId } from '@core/ids'
 import type { Condition, ConditionType } from '@core/types/condition'
 
+// hasOptionalAffixes is deliberately absent — it has its own dedicated per-rule UI
+// (OptionalAffixesSection, Epic #32) rather than living in the generic "Add condition" dropdown.
+// The type itself, createDefaultCondition, and CONDITION_TYPE_LABELS stay complete so existing
+// hasOptionalAffixes conditions (if any ever exist) still render correctly.
 export const CONDITION_TYPES: ConditionType[] = [
   'itemProperties',
   'rarityMatch',
   'codexUpgradeCheck',
   'itemTypeMatch',
   'hasRequiredAffixes',
-  'hasOptionalAffixes',
 ]
 
 export const CONDITION_TYPE_LABELS: Record<ConditionType, string> = {

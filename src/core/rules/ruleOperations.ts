@@ -1,5 +1,6 @@
 import { createId } from '@core/ids'
 import type { Condition } from '@core/types/condition'
+import type { RuleOptionalAffixesState } from '@core/types/globalAffixPool'
 import type { Rule, RuleVisibility } from '@core/types/rule'
 
 function cloneConditionWithFreshId(condition: Condition): Condition {
@@ -77,4 +78,12 @@ export function updateRuleConditions(
   updater: (conditions: Condition[]) => Condition[],
 ): Rule[] {
   return updateRule(rules, ruleId, (rule) => ({ ...rule, conditions: updater(rule.conditions) }))
+}
+
+export function updateRuleOptionalAffixes(
+  rules: Rule[],
+  ruleId: string,
+  updater: (current: RuleOptionalAffixesState | null) => RuleOptionalAffixesState,
+): Rule[] {
+  return updateRule(rules, ruleId, (rule) => ({ ...rule, optionalAffixes: updater(rule.optionalAffixes) }))
 }
