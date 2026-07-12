@@ -4,6 +4,8 @@ import type { RuleVisibility } from '@core/types/rule'
 
 export type AppAction =
   | { type: 'ADD_RULE' }
+  | { type: 'SET_GLOBAL_AFFIX_POOL_ENABLED'; enabled: boolean }
+  | { type: 'UPDATE_GLOBAL_AFFIX_POOL'; patch: { affixIds?: string[]; greaterAffixIds?: string[] } }
   | { type: 'REMOVE_RULE'; ruleId: string }
   | { type: 'DUPLICATE_RULE'; ruleId: string }
   | { type: 'REORDER_RULES'; fromIndex: number; toIndex: number }

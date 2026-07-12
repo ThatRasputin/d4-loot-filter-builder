@@ -1,5 +1,6 @@
 import { pushRecentColor } from '@core/colors/recentColors'
 import { addCondition, removeCondition, reorderConditions, updateCondition } from '@core/conditions/conditionOperations'
+import { setGlobalAffixPoolEnabled, updateGlobalAffixPool } from '@core/globalAffixPool/globalAffixPoolOperations'
 import {
   addRule,
   duplicateRule,
@@ -19,6 +20,12 @@ export function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
     case 'ADD_RULE':
       return { ...state, rules: addRule(state.rules) }
+
+    case 'SET_GLOBAL_AFFIX_POOL_ENABLED':
+      return { ...state, globalAffixPool: setGlobalAffixPoolEnabled(state.globalAffixPool, action.enabled) }
+
+    case 'UPDATE_GLOBAL_AFFIX_POOL':
+      return { ...state, globalAffixPool: updateGlobalAffixPool(state.globalAffixPool, action.patch) }
 
     case 'REMOVE_RULE':
       return { ...state, rules: removeRule(state.rules, action.ruleId) }

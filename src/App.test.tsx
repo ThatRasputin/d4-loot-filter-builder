@@ -53,4 +53,38 @@ describe('App', () => {
     expect(screen.getByText('No rule selected')).toBeInTheDocument()
     expect(screen.queryByRole('option')).not.toBeInTheDocument()
   })
+
+  it('opens the global affix pool dialog from the toolbar', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    expect(screen.queryByRole('dialog', { name: 'Global affix pool' })).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /global affix pool/i }))
+
+    const dialog = screen.getByRole('dialog', { name: 'Global affix pool' })
+    expect(dialog).toBeInTheDocument()
+    expect(screen.getByLabelText('Enable global affix pool')).toBeInTheDocument()
+  })
+
+  it('closes the global affix pool dialog via its close button', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /global affix pool/i }))
+    await user.click(screen.getByRole('button', { name: 'Close' }))
+
+    expect(screen.queryByRole('dialog', { name: 'Global affix pool' })).not.toBeInTheDocument()
+  })
+
+  it('reopens the global affix pool dialog after it was closed once', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /global affix pool/i }))
+    await user.click(screen.getByRole('button', { name: 'Close' }))
+    await user.click(screen.getByRole('button', { name: /global affix pool/i }))
+
+    expect(screen.getByRole('dialog', { name: 'Global affix pool' })).toBeInTheDocument()
+  })
 })

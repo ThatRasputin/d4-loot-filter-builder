@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { AppStateProvider } from '@state/AppStateContext'
 import type { AppState } from '@state/appState'
+import { createInitialAppState } from '@state/appState'
 import type { Rule } from '@core/types/rule'
 import { RuleList } from './RuleList'
 
@@ -14,13 +15,18 @@ function buildRule(overrides: Partial<Rule>): Rule {
     visibility: 'recolor',
     color: '#8a8a86',
     conditions: [],
+    optionalAffixes: null,
     ...overrides,
   }
 }
 
-function renderRuleList(initialState: AppState, selectedRuleId: string | null = null, onSelectRule = vi.fn()) {
+function renderRuleList(
+  initialState: Partial<AppState>,
+  selectedRuleId: string | null = null,
+  onSelectRule = vi.fn(),
+) {
   return render(
-    <AppStateProvider initialState={initialState}>
+    <AppStateProvider initialState={{ ...createInitialAppState(), ...initialState }}>
       <RuleList selectedRuleId={selectedRuleId} onSelectRule={onSelectRule} />
     </AppStateProvider>,
   )
@@ -28,7 +34,7 @@ function renderRuleList(initialState: AppState, selectedRuleId: string | null = 
 
 describe('RuleList', () => {
   it('renders one row per rule', () => {
-    const state: AppState = {
+    const state: Partial<AppState> = {
       rules: [buildRule({ id: 'a', name: 'First' }), buildRule({ id: 'b', name: 'Second' })],
       recentColors: [],
     }
@@ -40,7 +46,7 @@ describe('RuleList', () => {
 
   it('adds a new rule when the add-rule button is clicked', async () => {
     const user = userEvent.setup()
-    const state: AppState = { rules: [], recentColors: [] }
+    const state: Partial<AppState> = { rules: [], recentColors: [] }
     renderRuleList(state)
 
     await user.click(screen.getByRole('button', { name: /add rule/i }))
@@ -50,7 +56,7 @@ describe('RuleList', () => {
 
   it('enables and disables every rule via the bulk toggle buttons', async () => {
     const user = userEvent.setup()
-    const state: AppState = {
+    const state: Partial<AppState> = {
       rules: [buildRule({ id: 'a', enabled: false }), buildRule({ id: 'b', enabled: false })],
       recentColors: [],
     }
@@ -65,7 +71,7 @@ describe('RuleList', () => {
 
   it('duplicates a rule with a " copy" suffix when the duplicate button is clicked', async () => {
     const user = userEvent.setup()
-    const state: AppState = { rules: [buildRule({ id: 'a', name: 'Chest armor' })], recentColors: [] }
+    const state: Partial<AppState> = { rules: [buildRule({ id: 'a', name: 'Chest armor' })], recentColors: [] }
     renderRuleList(state)
 
     await user.click(screen.getByRole('button', { name: /duplicate/i }))
@@ -75,7 +81,7 @@ describe('RuleList', () => {
 
   it('removes a rule when the delete button is clicked', async () => {
     const user = userEvent.setup()
-    const state: AppState = { rules: [buildRule({ id: 'a', name: 'Chest armor' })], recentColors: [] }
+    const state: Partial<AppState> = { rules: [buildRule({ id: 'a', name: 'Chest armor' })], recentColors: [] }
     renderRuleList(state)
 
     await user.click(screen.getByRole('button', { name: /delete/i }))
@@ -86,7 +92,7 @@ describe('RuleList', () => {
   it('calls onSelectRule with the clicked rule id', async () => {
     const user = userEvent.setup()
     const onSelectRule = vi.fn()
-    const state: AppState = { rules: [buildRule({ id: 'a', name: 'Chest armor' })], recentColors: [] }
+    const state: Partial<AppState> = { rules: [buildRule({ id: 'a', name: 'Chest armor' })], recentColors: [] }
     renderRuleList(state, null, onSelectRule)
 
     await user.click(screen.getByText('Chest armor'))
@@ -95,7 +101,7 @@ describe('RuleList', () => {
   })
 
   it('marks the selected rule as aria-selected', () => {
-    const state: AppState = {
+    const state: Partial<AppState> = {
       rules: [buildRule({ id: 'a', name: 'First' }), buildRule({ id: 'b', name: 'Second' })],
       recentColors: [],
     }

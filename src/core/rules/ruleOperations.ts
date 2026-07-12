@@ -18,6 +18,7 @@ export function addRule(rules: Rule[]): Rule[] {
     visibility: 'recolor',
     color: '#8a8a86',
     conditions: [],
+    optionalAffixes: null,
   }
   return [...rules, newRule]
 }

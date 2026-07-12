@@ -21,6 +21,7 @@ function makeRule(overrides: Partial<Rule> = {}): Rule {
     visibility: 'recolor',
     color: '#ffffff',
     conditions: [],
+    optionalAffixes: null,
     ...overrides,
   }
 }
