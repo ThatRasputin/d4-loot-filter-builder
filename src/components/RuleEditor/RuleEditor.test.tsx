@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import { AppStateProvider } from '@state/AppStateContext'
 import type { AppState } from '@state/appState'
+import { createInitialAppState } from '@state/appState'
 import type { Rule } from '@core/types/rule'
 import { RuleEditor } from './RuleEditor'
 
@@ -14,13 +15,14 @@ function buildRule(overrides: Partial<Rule> = {}): Rule {
     visibility: 'show',
     color: '#8a8a86',
     conditions: [],
+    optionalAffixes: null,
     ...overrides,
   }
 }
 
-function renderRuleEditor(initialState: AppState, ruleId: string | null) {
+function renderRuleEditor(initialState: Partial<AppState>, ruleId: string | null) {
   return render(
-    <AppStateProvider initialState={initialState}>
+    <AppStateProvider initialState={{ ...createInitialAppState(), ...initialState }}>
       <RuleEditor ruleId={ruleId} />
     </AppStateProvider>,
   )

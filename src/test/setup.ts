@@ -17,3 +17,20 @@ globalThis.ResizeObserver ??= ResizeObserverMock
 
 Object.defineProperty(HTMLElement.prototype, 'offsetHeight', { configurable: true, value: 300 })
 Object.defineProperty(HTMLElement.prototype, 'offsetWidth', { configurable: true, value: 300 })
+
+// jsdom has never implemented <dialog>'s imperative methods (showModal/close), only the `open`
+// attribute reflection — see https://github.com/jsdom/jsdom/issues/3294. GlobalAffixPoolDialog
+// drives visibility purely through these two methods, so tests need a minimal stand-in: toggle
+// the `open` attribute and fire the same 'close' event real browsers fire on close().
+if (!HTMLDialogElement.prototype.showModal) {
+  HTMLDialogElement.prototype.showModal = function (this: HTMLDialogElement) {
+    this.setAttribute('open', '')
+  }
+}
+if (!HTMLDialogElement.prototype.close) {
+  HTMLDialogElement.prototype.close = function (this: HTMLDialogElement) {
+    if (!this.open) return
+    this.removeAttribute('open')
+    this.dispatchEvent(new Event('close'))
+  }
+}

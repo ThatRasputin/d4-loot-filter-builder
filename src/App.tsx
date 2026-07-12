@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { AppToolbar } from '@components/AppToolbar/AppToolbar'
+import { GlobalAffixPoolDialog } from '@components/GlobalAffixPool/GlobalAffixPoolDialog'
 import { RuleList } from '@components/RuleList/RuleList'
 import { RuleEditor } from '@components/RuleEditor/RuleEditor'
 import { AppStateProvider } from '@state/AppStateContext'
@@ -15,6 +16,7 @@ function seedInitialState() {
 function AppShell() {
   const { state, undo, redo, canUndo, canRedo } = useAppState()
   const [selectedRuleId, setSelectedRuleId] = useState<string | null>(state.rules[0]?.id ?? null)
+  const [isGlobalAffixPoolOpen, setIsGlobalAffixPoolOpen] = useState(false)
   useUndoRedoShortcuts({ undo, redo })
 
   const resolvedRuleId = state.rules.some((rule) => rule.id === selectedRuleId)
@@ -23,9 +25,16 @@ function AppShell() {
 
   return (
     <div>
-      <AppToolbar canUndo={canUndo} canRedo={canRedo} onUndo={undo} onRedo={redo} />
+      <AppToolbar
+        canUndo={canUndo}
+        canRedo={canRedo}
+        onUndo={undo}
+        onRedo={redo}
+        onOpenGlobalAffixPool={() => setIsGlobalAffixPoolOpen(true)}
+      />
       <RuleList selectedRuleId={resolvedRuleId} onSelectRule={setSelectedRuleId} />
       <RuleEditor ruleId={resolvedRuleId} />
+      <GlobalAffixPoolDialog isOpen={isGlobalAffixPoolOpen} onClose={() => setIsGlobalAffixPoolOpen(false)} />
     </div>
   )
 }

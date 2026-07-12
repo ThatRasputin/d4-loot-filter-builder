@@ -11,12 +11,13 @@ function makeRule(overrides: Partial<Rule> = {}): Rule {
     visibility: 'recolor',
     color: '#ffffff',
     conditions: [],
+    optionalAffixes: null,
     ...overrides,
   }
 }
 
 function makeState(overrides: Partial<AppState> = {}): AppState {
-  return { rules: [], recentColors: [], ...overrides }
+  return { rules: [], recentColors: [], globalAffixPool: { enabled: false, affixIds: [], greaterAffixIds: [] }, ...overrides }
 }
 
 describe('appReducer', () => {
@@ -136,6 +137,26 @@ describe('appReducer', () => {
       })
       const result = appReducer(state, { type: 'ADD_CONDITION', ruleId: 'a', condition })
       expect(result.rules[1].conditions).toEqual([])
+    })
+  })
+
+  describe('global affix pool actions', () => {
+    it('SET_GLOBAL_AFFIX_POOL_ENABLED toggles the enabled flag', () => {
+      const state = makeState({ globalAffixPool: { enabled: false, affixIds: [], greaterAffixIds: [] } })
+      const result = appReducer(state, { type: 'SET_GLOBAL_AFFIX_POOL_ENABLED', enabled: true })
+      expect(result.globalAffixPool.enabled).toBe(true)
+    })
+
+    it('UPDATE_GLOBAL_AFFIX_POOL patches the affix lists', () => {
+      const state = makeState({ globalAffixPool: { enabled: true, affixIds: [], greaterAffixIds: [] } })
+      const result = appReducer(state, { type: 'UPDATE_GLOBAL_AFFIX_POOL', patch: { affixIds: ['a1'] } })
+      expect(result.globalAffixPool.affixIds).toEqual(['a1'])
+    })
+
+    it('leaves rules unchanged when global affix pool actions are dispatched', () => {
+      const state = makeState({ rules: [makeRule({ id: 'a' })] })
+      const result = appReducer(state, { type: 'SET_GLOBAL_AFFIX_POOL_ENABLED', enabled: true })
+      expect(result.rules).toEqual(state.rules)
     })
   })
 

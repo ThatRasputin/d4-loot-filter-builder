@@ -1,5 +1,4 @@
-import { AFFIX_POOL } from '@core/data/affixPool'
-import { Combobox } from './Combobox/Combobox'
+import { AffixListPicker } from './AffixListPicker'
 
 export interface AffixListPatch {
   affixIds?: string[]
@@ -22,13 +21,7 @@ export function AffixListEditor({ legend, affixIds, greaterAffixIds, minimumCoun
   return (
     <fieldset>
       <legend>{legend}</legend>
-      <Combobox label="Affixes" pool={AFFIX_POOL} selectedIds={affixIds} onChange={(ids) => onChange({ affixIds: ids })} />
-      <Combobox
-        label="Greater affixes"
-        pool={AFFIX_POOL}
-        selectedIds={greaterAffixIds}
-        onChange={(ids) => onChange({ greaterAffixIds: ids })}
-      />
+      <AffixListPicker affixIds={affixIds} greaterAffixIds={greaterAffixIds} onChange={onChange} />
       <label>
         At least
         <input
