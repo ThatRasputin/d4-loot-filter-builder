@@ -60,6 +60,12 @@ describe('createDefaultCondition', () => {
   })
 })
 
+describe('CONDITION_TYPES', () => {
+  it('excludes hasOptionalAffixes — it has its own dedicated UI (OptionalAffixesSection), not the generic condition list (#21)', () => {
+    expect(CONDITION_TYPES).not.toContain('hasOptionalAffixes')
+  })
+})
+
 describe('getAvailableConditionTypes', () => {
   it('returns every known type when no conditions are present', () => {
     expect(getAvailableConditionTypes([])).toEqual(CONDITION_TYPES)

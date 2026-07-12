@@ -2,6 +2,7 @@ import { ColorControl } from '@components/RuleEditor/ColorControl/ColorControl'
 import { createDefaultCondition } from '@core/conditions/conditionTypeRegistry'
 import { useAppState } from '@state/useAppState'
 import { ConditionList } from './ConditionList/ConditionList'
+import { OptionalAffixesSection } from './OptionalAffixes/OptionalAffixesSection'
 import { VisibilitySelect } from './VisibilitySelect'
 
 interface RuleEditorProps {
@@ -39,6 +40,7 @@ export function RuleEditor({ ruleId }: RuleEditorProps) {
           dispatch({ type: 'UPDATE_CONDITION', ruleId: rule.id, conditionId, patch })
         }
       />
+      <OptionalAffixesSection ruleId={rule.id} />
     </div>
   )
 }
