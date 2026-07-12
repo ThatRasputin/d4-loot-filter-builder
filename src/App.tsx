@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { AppToolbar } from '@components/AppToolbar/AppToolbar'
+import { GlobalAffixPoolCard } from '@components/GlobalAffixPool/GlobalAffixPoolCard'
 import { GlobalAffixPoolDialog } from '@components/GlobalAffixPool/GlobalAffixPoolDialog'
 import { RuleList } from '@components/RuleList/RuleList'
 import { RuleEditor } from '@components/RuleEditor/RuleEditor'
@@ -32,6 +33,7 @@ function AppShell() {
         onRedo={redo}
         onOpenGlobalAffixPool={() => setIsGlobalAffixPoolOpen(true)}
       />
+      <GlobalAffixPoolCard />
       <RuleList selectedRuleId={resolvedRuleId} onSelectRule={setSelectedRuleId} />
       <RuleEditor ruleId={resolvedRuleId} />
       <GlobalAffixPoolDialog isOpen={isGlobalAffixPoolOpen} onClose={() => setIsGlobalAffixPoolOpen(false)} />

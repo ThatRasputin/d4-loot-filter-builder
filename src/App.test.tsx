@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect } from 'vitest'
 import App from './App'
@@ -86,5 +86,33 @@ describe('App', () => {
     await user.click(screen.getByRole('button', { name: /global affix pool/i }))
 
     expect(screen.getByRole('dialog', { name: 'Global affix pool' })).toBeInTheDocument()
+  })
+
+  it('does not show the global affix pool card until the pool is enabled', () => {
+    render(<App />)
+
+    expect(screen.queryByRole('region', { name: 'Global affix pool' })).not.toBeInTheDocument()
+  })
+
+  it('shows the global affix pool card above the rule list once enabled via the dialog', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /global affix pool/i }))
+    await user.click(within(screen.getByRole('dialog')).getByLabelText('Enable global affix pool'))
+    await user.click(screen.getByRole('button', { name: 'Close' }))
+
+    expect(screen.getByRole('region', { name: 'Global affix pool' })).toBeInTheDocument()
+  })
+
+  it('hides the global affix pool card again once disabled', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /global affix pool/i }))
+    await user.click(within(screen.getByRole('dialog')).getByLabelText('Enable global affix pool'))
+    await user.click(within(screen.getByRole('dialog')).getByLabelText('Enable global affix pool'))
+
+    expect(screen.queryByRole('region', { name: 'Global affix pool' })).not.toBeInTheDocument()
   })
 })
