@@ -14,6 +14,7 @@ export type AppAction =
       patch: { customAffixIds?: string[]; customGreaterAffixIds?: string[] }
     }
   | { type: 'SET_RULE_OPTIONAL_AFFIXES_COUNT'; ruleId: string; requiredCount: number }
+  | { type: 'SET_RULE_OPTIONAL_AFFIXES_REMOVED'; ruleId: string; removed: boolean }
   | { type: 'REMOVE_RULE'; ruleId: string }
   | { type: 'DUPLICATE_RULE'; ruleId: string }
   | { type: 'REORDER_RULES'; fromIndex: number; toIndex: number }

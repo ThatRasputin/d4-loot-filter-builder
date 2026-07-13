@@ -16,6 +16,7 @@ import {
 import {
   setRuleOptionalAffixesCount,
   setRuleOptionalAffixesListMode,
+  setRuleOptionalAffixesRemoved,
   updateRuleOptionalAffixesCustomList,
 } from '@core/rules/ruleOptionalAffixesOperations'
 import type { AppAction } from './actions'
@@ -43,6 +44,9 @@ export function appReducer(state: AppState, action: AppAction): AppState {
 
     case 'SET_RULE_OPTIONAL_AFFIXES_COUNT':
       return { ...state, rules: setRuleOptionalAffixesCount(state.rules, action.ruleId, action.requiredCount) }
+
+    case 'SET_RULE_OPTIONAL_AFFIXES_REMOVED':
+      return { ...state, rules: setRuleOptionalAffixesRemoved(state.rules, action.ruleId, action.removed) }
 
     case 'REMOVE_RULE':
       return { ...state, rules: removeRule(state.rules, action.ruleId) }

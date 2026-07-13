@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import type { AppState } from './appState'
 import { appReducer } from './appReducer'
+import { resolveOptionalAffixesState } from '@core/optionalAffixes/resolveOptionalAffixesState'
 import type { Rule } from '@core/types/rule'
 
 function makeRule(overrides: Partial<Rule> = {}): Rule {
@@ -197,10 +198,89 @@ describe('appReducer', () => {
       expect(result.rules[0].optionalAffixes).toMatchObject({ customAffixIds: ['x'] })
     })
 
+    it('SET_RULE_OPTIONAL_AFFIXES_REMOVED marks the rule removed without discarding its record', () => {
+      const state = makeState({
+        rules: [
+          makeRule({
+            id: 'a',
+            optionalAffixes: {
+              removed: false,
+              listMode: 'custom',
+              customAffixIds: ['x'],
+              customGreaterAffixIds: [],
+              requiredCount: 2,
+            },
+          }),
+        ],
+      })
+      const result = appReducer(state, { type: 'SET_RULE_OPTIONAL_AFFIXES_REMOVED', ruleId: 'a', removed: true })
+      expect(result.rules[0].optionalAffixes).toMatchObject({ removed: true, customAffixIds: ['x'], requiredCount: 2 })
+    })
+
     it('SET_RULE_OPTIONAL_AFFIXES_COUNT materializes the rule and sets the count', () => {
       const state = makeState({ rules: [makeRule({ id: 'a', optionalAffixes: null })] })
       const result = appReducer(state, { type: 'SET_RULE_OPTIONAL_AFFIXES_COUNT', ruleId: 'a', requiredCount: 2 })
       expect(result.rules[0].optionalAffixes).toMatchObject({ requiredCount: 2 })
+    })
+  })
+
+  // Epic #32's master-switch acceptance criterion (#20): turning the global pool off and back
+  // on must restore every rule to exactly its prior effective state, whatever that state was.
+  // Lazy materialization makes this true by construction (the toggle never touches rule data),
+  // but this test pins it as a contract across all four reachable rule states.
+  describe('global pool off/on round-trip (#20)', () => {
+    it('restores the exact prior effective state for every rule shape', () => {
+      const initial = makeState({
+        globalAffixPool: { enabled: true, affixIds: ['g1'], greaterAffixIds: ['gg1'] },
+        rules: [
+          makeRule({ id: 'untouched', optionalAffixes: null }),
+          makeRule({
+            id: 'custom-count',
+            optionalAffixes: {
+              removed: false,
+              listMode: 'inherited',
+              customAffixIds: [],
+              customGreaterAffixIds: [],
+              requiredCount: 3,
+            },
+          }),
+          makeRule({
+            id: 'custom-list',
+            optionalAffixes: {
+              removed: false,
+              listMode: 'custom',
+              customAffixIds: ['mine'],
+              customGreaterAffixIds: [],
+              requiredCount: 1,
+            },
+          }),
+          makeRule({
+            id: 'removed',
+            optionalAffixes: {
+              removed: true,
+              listMode: 'inherited',
+              customAffixIds: [],
+              customGreaterAffixIds: [],
+              requiredCount: 2,
+            },
+          }),
+        ],
+      })
+
+      const resolveAll = (state: AppState) =>
+        state.rules.map((rule) => resolveOptionalAffixesState(rule, state.globalAffixPool))
+      const before = resolveAll(initial)
+
+      const pausedState = appReducer(initial, { type: 'SET_GLOBAL_AFFIX_POOL_ENABLED', enabled: false })
+      const paused = resolveAll(pausedState)
+      // While off: nothing stays active except explicit custom lists.
+      expect(paused.map((r) => r.status)).toEqual(['neverTouched', 'paused', 'customOn', 'removed'])
+      // The pause never rewrites rule data — same object references, not just equal values.
+      expect(pausedState.rules).toEqual(initial.rules)
+
+      const resumedState = appReducer(pausedState, { type: 'SET_GLOBAL_AFFIX_POOL_ENABLED', enabled: true })
+      expect(resolveAll(resumedState)).toEqual(before)
+      expect(before.map((r) => r.status)).toEqual(['inheritedOn', 'inheritedOn', 'customOn', 'removed'])
     })
   })
 

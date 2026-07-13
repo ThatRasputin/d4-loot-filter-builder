@@ -105,6 +105,24 @@ describe('App', () => {
     expect(screen.getByRole('region', { name: 'Global affix pool' })).toBeInTheDocument()
   })
 
+  it('supports undo/redo across optional-affix removal end-to-end', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /global affix pool/i }))
+    await user.click(within(screen.getByRole('dialog')).getByLabelText('Enable global affix pool'))
+    await user.click(screen.getByRole('button', { name: 'Close' }))
+    await user.click(screen.getByRole('button', { name: 'Remove from rule' }))
+
+    expect(screen.getByText('Removed from this rule')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /undo/i }))
+    expect(screen.getByText('Inherited from global pool')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /redo/i }))
+    expect(screen.getByText('Removed from this rule')).toBeInTheDocument()
+  })
+
   it('hides the global affix pool card again once disabled', async () => {
     const user = userEvent.setup()
     render(<App />)

@@ -37,6 +37,12 @@ export function updateRuleOptionalAffixesCustomList(
   return updateRuleOptionalAffixes(rules, ruleId, (current) => ({ ...ensureMaterialized(current), ...patch }))
 }
 
+// Removal is non-destructive (#19): only the `removed` flag flips, so the rule's custom list
+// and count survive intact and "Add to this rule" restores exactly what was there before.
+export function setRuleOptionalAffixesRemoved(rules: Rule[], ruleId: string, removed: boolean): Rule[] {
+  return updateRuleOptionalAffixes(rules, ruleId, (current) => ({ ...ensureMaterialized(current), removed }))
+}
+
 // Always independent of listMode/removed/global state (#17) — the count is editable regardless
 // of what else is going on with the rule's optional-affix configuration.
 export function setRuleOptionalAffixesCount(rules: Rule[], ruleId: string, requiredCount: number): Rule[] {
