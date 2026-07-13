@@ -107,4 +107,52 @@ describe('RuleEditor', () => {
 
     expect(screen.getByRole('region', { name: 'Optional affixes' })).toBeInTheDocument()
   })
+
+  it('shows the affix-count warning banner for a rule over budget from required-affixes alone, even though the optional-affixes section never diverged and is not rendered', () => {
+    renderRuleEditor(
+      {
+        rules: [
+          buildRule({
+            conditions: [{ id: 'c', type: 'hasRequiredAffixes', affixIds: [], greaterAffixIds: [], minimumCount: 5 }],
+          }),
+        ],
+        recentColors: [],
+        globalAffixPool: { enabled: false, affixIds: [], greaterAffixIds: [] },
+      },
+      'rule-1',
+    )
+
+    expect(screen.queryByRole('region', { name: 'Optional affixes' })).not.toBeInTheDocument()
+    expect(screen.getByText(/not likely to occur on item drops/)).toBeInTheDocument()
+  })
+
+  it('clears the affix-count warning banner when "Use suggested" is clicked', async () => {
+    const user = userEvent.setup()
+    renderRuleEditor(
+      {
+        rules: [
+          buildRule({
+            conditions: [{ id: 'c', type: 'hasRequiredAffixes', affixIds: [], greaterAffixIds: [], minimumCount: 3 }],
+            optionalAffixes: {
+              removed: false,
+              listMode: 'inherited',
+              customAffixIds: [],
+              customGreaterAffixIds: [],
+              requiredCount: 4,
+            },
+          }),
+        ],
+        recentColors: [],
+        globalAffixPool: { enabled: true, affixIds: [], greaterAffixIds: [] },
+      },
+      'rule-1',
+    )
+
+    expect(screen.getByText(/cannot occur on any item/)).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /use suggested/i }))
+
+    expect(screen.queryByText(/cannot occur on any item/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/not likely to occur on item drops/)).not.toBeInTheDocument()
+  })
 })

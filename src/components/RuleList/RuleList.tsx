@@ -2,6 +2,7 @@ import { closestCenter, DndContext } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { SortableItem } from '@components/dnd/SortableItem'
 import { useDragReorder } from '@components/dnd/useDragReorder'
+import { resolveAffixCountWarning } from '@core/optionalAffixes/affixCountWarning'
 import { useAppState } from '@state/useAppState'
 import { RuleListRow } from './RuleListRow'
 import { RuleListToolbar } from './RuleListToolbar'
@@ -42,6 +43,7 @@ export function RuleList({ selectedRuleId, onSelectRule }: RuleListProps) {
                     onDuplicate={() => dispatch({ type: 'DUPLICATE_RULE', ruleId: rule.id })}
                     onDelete={() => dispatch({ type: 'REMOVE_RULE', ruleId: rule.id })}
                     dragHandle={dragHandle}
+                    warningTier={resolveAffixCountWarning(rule, state.globalAffixPool).tier}
                   />
                 )}
               </SortableItem>

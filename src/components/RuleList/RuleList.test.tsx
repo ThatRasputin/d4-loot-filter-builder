@@ -100,6 +100,30 @@ describe('RuleList', () => {
     expect(onSelectRule).toHaveBeenCalledWith('a')
   })
 
+  it('shows a warning icon on a rule whose required-affixes minimum exceeds the realistic budget', () => {
+    const overBudgetRule = buildRule({
+      id: 'a',
+      name: 'Over budget',
+      conditions: [{ id: 'cond-1', type: 'hasRequiredAffixes', affixIds: [], greaterAffixIds: [], minimumCount: 5 }],
+    })
+    const state: Partial<AppState> = { rules: [overBudgetRule], recentColors: [] }
+    renderRuleList(state)
+
+    expect(screen.getByRole('img', { name: /notice/i })).toBeInTheDocument()
+  })
+
+  it('does not show a warning icon on a rule within the realistic affix budget', () => {
+    const withinBudgetRule = buildRule({
+      id: 'a',
+      name: 'Within budget',
+      conditions: [{ id: 'cond-1', type: 'hasRequiredAffixes', affixIds: [], greaterAffixIds: [], minimumCount: 2 }],
+    })
+    const state: Partial<AppState> = { rules: [withinBudgetRule], recentColors: [] }
+    renderRuleList(state)
+
+    expect(screen.queryByRole('img')).not.toBeInTheDocument()
+  })
+
   it('marks the selected rule as aria-selected', () => {
     const state: Partial<AppState> = {
       rules: [buildRule({ id: 'a', name: 'First' }), buildRule({ id: 'b', name: 'Second' })],
