@@ -130,6 +130,91 @@ describe('OptionalAffixesSection', () => {
     expect(screen.getByText('Paused — global pool is off')).toBeInTheDocument()
   })
 
+  it('removes optional affixes from the rule while keeping the section visible with a re-add button', async () => {
+    const user = userEvent.setup()
+    renderSection({
+      rules: [buildRule()],
+      globalAffixPool: { enabled: true, affixIds: ['abyss_damage'], greaterAffixIds: [] },
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Remove from rule' }))
+
+    expect(screen.getByText('Removed from this rule')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Add to this rule' })).toBeInTheDocument()
+    expect(screen.queryByText('abyss damage')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Required count')).not.toBeInTheDocument()
+  })
+
+  it('restores the exact prior custom configuration when re-added after removal', async () => {
+    const user = userEvent.setup()
+    renderSection({
+      rules: [
+        buildRule({
+          optionalAffixes: {
+            removed: true,
+            listMode: 'custom',
+            customAffixIds: ['abyss_damage'],
+            customGreaterAffixIds: [],
+            requiredCount: 3,
+          },
+        }),
+      ],
+      globalAffixPool: { enabled: true, affixIds: ['ancient_damage'], greaterAffixIds: [] },
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Add to this rule' }))
+
+    expect(screen.getByText('Custom list')).toBeInTheDocument()
+    expect(screen.getByText('abyss damage')).toBeInTheDocument()
+    expect(screen.getByLabelText('Required count')).toHaveValue(3)
+  })
+
+  it('shows the removed state even when the global pool is off — removal is rule-level, not pool-level', () => {
+    renderSection({
+      rules: [
+        buildRule({
+          optionalAffixes: {
+            removed: true,
+            listMode: 'inherited',
+            customAffixIds: [],
+            customGreaterAffixIds: [],
+            requiredCount: 0,
+          },
+        }),
+      ],
+      globalAffixPool: { enabled: false, affixIds: [], greaterAffixIds: [] },
+    })
+
+    expect(screen.getByText('Removed from this rule')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Add to this rule' })).toBeInTheDocument()
+  })
+
+  it('lets a paused rule opt into its own custom list without the global switch coming back on (#20)', async () => {
+    const user = userEvent.setup()
+    renderSection({
+      rules: [
+        buildRule({
+          optionalAffixes: {
+            removed: false,
+            listMode: 'inherited',
+            customAffixIds: [],
+            customGreaterAffixIds: [],
+            requiredCount: 2,
+          },
+        }),
+      ],
+      globalAffixPool: { enabled: false, affixIds: ['abyss_damage'], greaterAffixIds: [] },
+    })
+
+    expect(screen.getByText('Paused — global pool is off')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Customize list for this rule' }))
+
+    expect(screen.getByText('Custom list')).toBeInTheDocument()
+    expect(screen.getByText('abyss damage')).toBeInTheDocument()
+    expect(screen.getByLabelText('Required count')).toHaveValue(2)
+  })
+
   it('reflects the current required count and updates it on change', async () => {
     const user = userEvent.setup()
     renderSection({

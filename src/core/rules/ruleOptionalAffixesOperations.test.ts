@@ -4,6 +4,7 @@ import type { Rule } from '@core/types/rule'
 import {
   setRuleOptionalAffixesListMode,
   setRuleOptionalAffixesCount,
+  setRuleOptionalAffixesRemoved,
   updateRuleOptionalAffixesCustomList,
 } from './ruleOptionalAffixesOperations'
 
@@ -98,6 +99,41 @@ describe('updateRuleOptionalAffixesCustomList', () => {
     ]
     const result = updateRuleOptionalAffixesCustomList(rules, 'rule-1', { customAffixIds: ['a', 'b'] })
     expect(result[0].optionalAffixes).toMatchObject({ customAffixIds: ['a', 'b'], customGreaterAffixIds: ['g'] })
+  })
+})
+
+describe('setRuleOptionalAffixesRemoved', () => {
+  it('materializes a never-touched rule when removing, defaulting everything else', () => {
+    const rules = [makeRule(null)]
+    const result = setRuleOptionalAffixesRemoved(rules, 'rule-1', true)
+    expect(result[0].optionalAffixes).toEqual({
+      removed: true,
+      listMode: 'inherited',
+      customAffixIds: [],
+      customGreaterAffixIds: [],
+      requiredCount: 0,
+    })
+  })
+
+  it('preserves the custom list and count while removed, so re-adding restores them exactly', () => {
+    const record: RuleOptionalAffixesState = {
+      removed: false,
+      listMode: 'custom',
+      customAffixIds: ['a'],
+      customGreaterAffixIds: ['g'],
+      requiredCount: 3,
+    }
+    const removed = setRuleOptionalAffixesRemoved([makeRule(record)], 'rule-1', true)
+    expect(removed[0].optionalAffixes).toEqual({ ...record, removed: true })
+
+    const restored = setRuleOptionalAffixesRemoved(removed, 'rule-1', false)
+    expect(restored[0].optionalAffixes).toEqual(record)
+  })
+
+  it('leaves other rules untouched', () => {
+    const other = makeRule(null, 'rule-2')
+    const result = setRuleOptionalAffixesRemoved([makeRule(null), other], 'rule-1', true)
+    expect(result[1]).toBe(other)
   })
 })
 

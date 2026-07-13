@@ -40,7 +40,24 @@ export function OptionalAffixesSection({ ruleId }: OptionalAffixesSectionProps) 
   if (!rule) return null
 
   const resolved = resolveOptionalAffixesState(rule, state.globalAffixPool)
-  if (resolved.status === 'neverTouched' || resolved.status === 'removed') return null
+  if (resolved.status === 'neverTouched') return null
+
+  // Removal is non-destructive: the record (custom list, count) survives underneath, so the
+  // section stays visible as a stub offering to restore exactly what was there before (#19).
+  if (resolved.status === 'removed') {
+    return (
+      <section aria-label="Optional affixes">
+        <h3>Optional affixes</h3>
+        <p>Removed from this rule</p>
+        <button
+          type="button"
+          onClick={() => dispatch({ type: 'SET_RULE_OPTIONAL_AFFIXES_REMOVED', ruleId, removed: false })}
+        >
+          Add to this rule
+        </button>
+      </section>
+    )
+  }
 
   const requiredAffixCondition = rule.conditions.find((condition) => condition.type === 'hasRequiredAffixes')
   const suggestedCount = computeSuggestedOptionalAffixCount(requiredAffixCondition?.minimumCount ?? 0)
@@ -49,6 +66,12 @@ export function OptionalAffixesSection({ ruleId }: OptionalAffixesSectionProps) 
     <section aria-label="Optional affixes">
       <h3>Optional affixes</h3>
       <p>{STATUS_LABEL[resolved.status]}</p>
+      <button
+        type="button"
+        onClick={() => dispatch({ type: 'SET_RULE_OPTIONAL_AFFIXES_REMOVED', ruleId, removed: true })}
+      >
+        Remove from rule
+      </button>
 
       {resolved.status === 'customOn' ? (
         <>
