@@ -46,6 +46,7 @@ describe('RuleListRow', () => {
         onDuplicate={vi.fn()}
         onDelete={vi.fn()}
         dragHandle={dragHandle}
+        warningTier={null}
       />,
     )
 
@@ -66,6 +67,7 @@ describe('RuleListRow', () => {
         onDuplicate={vi.fn()}
         onDelete={vi.fn()}
         dragHandle={dragHandle}
+        warningTier={null}
       />,
     )
 
@@ -87,6 +89,7 @@ describe('RuleListRow', () => {
         onDuplicate={onDuplicate}
         onDelete={vi.fn()}
         dragHandle={dragHandle}
+        warningTier={null}
       />,
     )
 
@@ -108,6 +111,7 @@ describe('RuleListRow', () => {
         onDuplicate={vi.fn()}
         onDelete={onDelete}
         dragHandle={dragHandle}
+        warningTier={null}
       />,
     )
 
@@ -129,6 +133,7 @@ describe('RuleListRow', () => {
         onDuplicate={vi.fn()}
         onDelete={vi.fn()}
         dragHandle={dragHandle}
+        warningTier={null}
       />,
     )
 
@@ -148,6 +153,7 @@ describe('RuleListRow', () => {
         onDuplicate={vi.fn()}
         onDelete={vi.fn()}
         dragHandle={dragHandle}
+        warningTier={null}
       />,
     )
 
@@ -165,9 +171,64 @@ describe('RuleListRow', () => {
         onDuplicate={vi.fn()}
         onDelete={vi.fn()}
         dragHandle={dragHandle}
+        warningTier={null}
       />,
     )
 
     expect(screen.getByRole('button', { name: /drag/i })).toBeInTheDocument()
+  })
+
+  it('renders no warning icon when warningTier is null', () => {
+    render(
+      <RuleListRow
+        rule={buildRule()}
+        isSelected={false}
+        onSelect={vi.fn()}
+        onToggleEnabled={vi.fn()}
+        onRename={vi.fn()}
+        onDuplicate={vi.fn()}
+        onDelete={vi.fn()}
+        dragHandle={dragHandle}
+        warningTier={null}
+      />,
+    )
+
+    expect(screen.queryByRole('img')).not.toBeInTheDocument()
+  })
+
+  it('renders a Notice warning icon with an aria-label when warningTier is notice', () => {
+    render(
+      <RuleListRow
+        rule={buildRule()}
+        isSelected={false}
+        onSelect={vi.fn()}
+        onToggleEnabled={vi.fn()}
+        onRename={vi.fn()}
+        onDuplicate={vi.fn()}
+        onDelete={vi.fn()}
+        dragHandle={dragHandle}
+        warningTier="notice"
+      />,
+    )
+
+    expect(screen.getByRole('img', { name: /notice/i })).toBeInTheDocument()
+  })
+
+  it('renders a Danger warning icon with an aria-label when warningTier is danger', () => {
+    render(
+      <RuleListRow
+        rule={buildRule()}
+        isSelected={false}
+        onSelect={vi.fn()}
+        onToggleEnabled={vi.fn()}
+        onRename={vi.fn()}
+        onDuplicate={vi.fn()}
+        onDelete={vi.fn()}
+        dragHandle={dragHandle}
+        warningTier="danger"
+      />,
+    )
+
+    expect(screen.getByRole('img', { name: /danger/i })).toBeInTheDocument()
   })
 })
